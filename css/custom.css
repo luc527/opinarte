@@ -1,0 +1,4 @@
+a.link { color: #607d8b; }
+img#imagem { width: 50%; float: left; margin: 0 2% 0 0; }
+main div.container { margin-top: 2%; }
+a.link:hover, a.link_underline:hover { text-decoration: underline; }
