@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-
 <?php
+
 include 'valida_secao.php';
-
-require_once('autoload.php');
-
-$title = "Cadastro de gênero";
+if ($_SESSION['usuario_tipo'] != 1) { // Se o usuário não é adm (0=normal, 1=adm)
+	header("genero_list.php");
+}
+require_once 'autoload.php';
 
 $acao = 'Insert';
 
@@ -28,60 +28,100 @@ if ($acao == 'Update') {
 	$linguagem = $ling->getId();
 }
 
+$title = 'Cadastro de gênero';
 
 ?>
-
 <html>
 
 <head>
 	<title><?php echo $title; ?></title>
-	<meta charset="utf-8">
+	<meta charset="utf=8">
+
+	<!-- Materialize -->
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection" />
+	<!-- Custom CSS -->
+	<link type="text/css" rel="stylesheet" href="css/custom.css" />
+	<!--Let browser know website is optimized for mobile-->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
 
-<body>
+<body class="blue-grey lighten-5">
+
+	<header><?php Funcoes::PrintHeader(); ?></header>
 
 	<main>
-		<div style="width: 70%; margin: auto;">
-			<?php if ($acao == 'Update') : ?>
-				<a href="genero.php?id=<?php echo $id; ?>">
-					Voltar para página do gênero
-				</a>
-			<?php endif; ?> <br/>
-			<form action="genero_acao.php" method="post">
-				<fieldset>
-					<legend><b><?php echo $title; ?></b></legend>
-					<label for="nome">Nome: </label> <br />
-					<input type="text" name="nome" id="nome" value="<?php echo $nome; ?>" required> <br /><br />
-
-					<label for="id">ID: </label> <br />
-					<input type="text" value="<?php echo $id; ?>" disabled> <br /><br />
-					<input type="hidden" name="id" id="id" value="<?php echo $id; ?>">
-
-					<label for="descricao">Descrição: </label> <br />
-					<textarea name="descricao" id="descricao"><?php echo $descricao; ?></textarea> <br /><br />
-
-					<label for="lingArte">Linguagem: </label> <br />
-					<?php Funcoes::GerarSelect('lingArte', 'linguagensArt', 'id', 'nome', $linguagem); ?> <br /><br />
-
-					<?php
-					if ($acao == 'Insert') $acao_txt = "Cadastrar";
-					else if ($acao == 'Update') $acao_txt = 'Editar'
-					?>
-					<button type="submit" name="acao" value="<?php echo $acao; ?>"><?php echo $acao_txt; ?></button>
-
-					<br /><br /><br /> <button type="submit" name="acao" value="Delete" style="background-color: darkred; color:white;">Excluir</button>
-				</fieldset>
-			</form>
-
+		<div class="container">
+			<?php if ($acao == 'Update'): ?>
+				<a class="link" href="genero.php?id=<?= $id; ?>">Voltar para página do gênero</a>
+			<?php endif; ?>
+			<div class="card-panel hoverable">
+				<form action="genero_acao.php" method="POST">
+					<div class="row">
+						<div class="input-field col s6">
+							<label for="nome">Nome</label>
+							<input type="text" name="nome" id="nome" value="<?= $nome; ?>" required />
+						</div>
+						<div class="input-field col s6">
+							<label for="id">ID</label>
+							<input type="text" value="<?php echo $id; ?>" disabled>
+							<input type="hidden" name="id" id="id" value="<?= $id; ?>">
+						</div>
+					</div>
+					<div class="row">
+						<div class="input-field col s12">
+							<label for="descricao">Descrição</label>
+							<textarea name="descricao" id="descricao" class="materialize-textarea"
+							><?= $descricao; ?></textarea>
+						</div>
+					</div>
+					<div class="row">
+						<div class="input-field col s12">
+							<?php Funcoes::GerarSelect('lingArte', 'linguagensArt', 'id', 'nome', $linguagem); ?>
+							<span class="helper-text">Linguagem</span>
+						</div>
+					</div>
+					<div class="row">
+						<?php
+							if ($acao == 'Insert') {
+								$acao_txt = "Cadastrar";
+								$acao_ico = 'add';
+							} else if ($acao == 'Update') {
+								$acao_txt = 'Editar';
+								$acao_ico = 'edit';
+							}
+						?>
+						<div class="input-field col s6">
+							<button
+								class="btn waves-effect waves-light light-green darken-2"
+								type="submit" name="acao" value="<?php echo $acao; ?>"
+							>
+								<i class="material-icons left"><?= $acao_ico; ?></i>
+								<?= $acao_txt; ?>
+							</button>
+						</div>
+						<div class="input-field col s6">
+							<button
+								class="btn waves-effect waves-light red darken-2"
+								type="submit" name="acao" value="Delete"
+							>
+								<i class="material-icons left">delete</i>
+								Excluir
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
 		</div>
 	</main>
 
-	<div id="teste">
-		<?php
-
-		?>
-	</div>
-
+	<!-- Scripts -->
+	<script type="text/javascript" src="js/jquery-3.4.1.js"></script> <!-- OBS: jQuery deve estar sempre acima -->
+	<script type="text/javascript" src="js/materialize.min.js"></script>
+	<!-- Materialize auto init -->
+	<script type="text/javascript">
+		M.AutoInit();
+	</script>
 </body>
 
 </html>

@@ -150,7 +150,6 @@ class GeneroDao {
 			$stmt = Conexao::getInstance()->prepare($sql);
 			$stmt->bindParam(":id", $id_obra);
 			return $stmt->execute();
-			//echo "<br/>".$stmt->rowCount();
 		} catch (Exception $e) {
 			echo $e->getMessage();
 		}

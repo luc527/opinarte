@@ -235,10 +235,11 @@ class ObraDao
 	public static function Delete($id)
 	{
 		try {
-			echo $id;
+			// Deleta as relações da obra com os gêneros
 			GeneroDao::DeleteObra($id);
 
-			ArtistaDao::DeleteObra($id);
+			// Deleta as relações da obra com artistas
+			ArtistaDao::DeleteObrasPorId($id);
 
 			$sql = "DELETE FROM obra WHERE id_obra = :id";
 			$stmt = Conexao::getInstance()->prepare($sql);

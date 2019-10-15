@@ -314,6 +314,18 @@ class ArtistaDao
 		}
 	}
 
+	public static function DeleteObrasPorId($obra_id)
+	{
+		$sql = "DELETE FROM artista_has_obra WHERE obra_id = :obra_id";
+		try {
+			$stmt = Conexao::getInstance()->prepare($sql);
+			$stmt->bindParam(":obra_id", $obra_id);
+		} catch (PDOException $e) {
+			echo "<b>Erro (ArtistaDao::DeletePorObrasId): </b>" . $e->getMessage();
+		}
+		return $stmt->execute();
+	}
+
 	public static function DeleteObras(Artista $artista)
 	{
 		$obras = $artista->getObras();

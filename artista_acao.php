@@ -1,4 +1,4 @@
- <?php
+<?php
 
 require_once('autoload.php');
 
@@ -27,7 +27,7 @@ if ($acao == 'Insert') {
 	$id = $_POST['id'];
 	$nome = $_POST['nome'];
 	$descricao = $_POST['descricao'];
-	$imgUrl = $_POST['imgUrl'];
+	$imgUrl = $_POST['imagemUrl'];
 
 	$artista = new Artista;
 	$artista->setId($id);

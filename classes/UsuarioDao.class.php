@@ -20,7 +20,6 @@ class UsuarioDao
 		$usuario->setEmail($row['email']);
 		$usuario->setUltimoLogin($row['ultimoLogin']);
 		$usuario->setSobre_mim($row['sobre_mim']);
-		$usuario->setPontuacao($row['pontuacao']);
 		$usuario->setAdm($row['adm']);
 		$usuario->setData_criaConta($row['data_criacaoConta']);
 

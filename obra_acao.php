@@ -8,8 +8,8 @@ if (isset($_POST['acao'])) $acao = $_POST['acao'];
 else if (isset($_GET['acao'])) $acao = $_GET['acao'];
 else $acao = '';
 
-echo $acao;
-
+// echo $acao;
+// var_dump($_POST);
 
 if ($acao == 'Insert' || $acao == 'Update') {
 	$obra = new Obra;

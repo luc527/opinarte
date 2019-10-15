@@ -9,8 +9,6 @@ class Usuario extends AbsIdNome
 	private $data_criaConta;
 	private $sobre_mim;
 	private $ultimo_login;
-	private $pontuacao;
-	private $nivel;
 	private $adm;
 
 	private $amigos = [];
@@ -91,26 +89,6 @@ class Usuario extends AbsIdNome
 	public function getUltimoLogin()
 	{
 		return $this->ultimo_login;
-	}
-
-	public function setPontuacao($p)
-	{
-		$this->pontuacao = $p;
-	}
-	public function getPontuacao()
-	{
-		return $this->pontuacao;
-	}
-
-	public function setNivel($n)
-	{
-		if ($n instanceof UsuarioNivel) {
-			$this->nivel = $n;
-		}
-	}
-	public function getNivel()
-	{
-		return $this->nivel;
 	}
 
 	public function setObra_fav($obra)

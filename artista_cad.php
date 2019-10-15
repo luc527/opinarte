@@ -2,6 +2,9 @@
 
 <?php
 include 'valida_secao.php';
+if ($_SESSION['usuario_tipo'] != 1) { // Se o usuário não é adm (0=normal, 1=adm)
+	header("artista_list.php");
+}
 
 require_once('autoload.php');
 
@@ -29,103 +32,212 @@ if ($acao == 'Update') {
 ?>
 
 <html>
+
 <head>
-	<title><?php echo $title; ?></title>
-	<meta charset="utf-8">
+	<title><?= $title ?></title>
+	<meta charset="utf=8">
+
+	<!-- Materialize -->
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection" />
+	<!-- Custom CSS -->
+	<link type="text/css" rel="stylesheet" href="css/custom.css" />
+	<!--Let browser know website is optimized for mobile-->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
-<body>
+
+<body class="blue-grey lighten-5">
+	<header><?php Funcoes::printHeader(); ?></header>
 
 	<main>
-		<div style="width: 70%; margin: auto;">
-			<?php if ($acao == 'Update'): ?>
-				<a href="artista.php?id=<?php echo $id;?>">
+		<div class="container">
+			<?php if ($acao == 'Update') : ?>
+				<a href="artista.php?id=<?= $id; ?>" class="link">
 					Voltar para página do artista
 				</a>
 			<?php endif; ?>
-			<form action="artista_acao.php" method="post">
-				<fieldset> <legend><b><?php echo $title; ?></b></legend>
-					<label for="nome">Nome: </label> <br/>
-					<input type="text" name="nome" id="nome" required value="<?php echo $nome; ?>"> <br/><br/>
+			<div class="card-panel hoverable">
 
-					<?php if($acao == 'Update') { ?>	
-						<label for="id">ID: </label> <br/>
-						<input type="text" value="<?php echo $id; ?>" disabled> <br/><br/>
-						<input type="hidden" name="id" value="<?php echo $id; ?>">
-					<?php } ?>
+				<form action="artista_acao.php" method="POST">
+					
+					<div class="row">
+						<div class="input-field col s6">
+							<label for="nome">Nome</label>
+							<input type="text" name="nome" id="nome" value="<?= $nome; ?>" required />
+						</div>
 
-					<label for="imgUrl">Imagem (url): </label> <br/>
-					<input type="url" name="imgUrl" id="imgUrl" value="<?php echo $imgUrl; ?>"> <br/><br/>
+						<div class="input-field col s6">
+							<label for="id">ID</label>
+							<input type="text" value="<?= $id ?>" disabled /> <!-- Mostra ao usuário -->
+							<input type="hidden" name="id" id="id" value="<?= $id ?>" /> <!-- O que o formulário envia -->
+							<!-- Os dois são necessários porque o disabled não é enviado -->
+						</div>
+					</div>
 
-					<?php
-					if ($acao == 'Update' && $imgUrl != '') {
-						echo "<img style='width:250px' src='".$imgUrl."'>";
-					}
-					?> <br/><br/>
+					<div class="row">
+						<div class="input-field col s12">
+							<label for="descricao">Descrição</label>
+							<textarea name="descricao" id="descricao" class="materialize-textarea"><?= $descricao; ?></textarea>
+						</div>
+					</div>
 
-					<label for="descricao">Descrição: </label> <br/>
-					<textarea name="descricao" id="descricao"><?php echo $descricao; ?></textarea> <br/><br/>
+					<div class="row">
+						<div class="input-field col s12">
+							<label for="imgUrl">Imagem (URL)</label>
+							<input type="url" name="imagemUrl" id="imagemUrl" value="<?= $imgUrl; ?>" />
+						
+							<?php if ($imgUrl != null) { ?>
+								<img
+									src="<?= $artista->getImagemUrl(); ?>"
+									alt="Imagem de <?= $artista->getNome(); ?>"
+									class="materialboxed" style="max-height: 225px;"
+								/>
+							<?php } ?>
 
-					<fieldset>
-						<?php
-						if ($acao == 'Update') {
+						</div>
+					</div>
+
+					<div class="row card-panel">
+						<h5 class="blue-text text-darken-2"><b>Obras</b></h5>
+
+						<?php if ($acao == 'Update') :
 							$artista = ArtistaDao::SelectObras($artista);
-							$obras = $artista->getObras();
+							$obras = $artista->getObras();	?>
 
-							echo "<b>Obras</b>";
-							echo "<ul>";
-							for ($i=0; $i < count($obras); $i++) { 
-								echo "<li>".$obras[$i]->getNome()
-								." [<a href='artista_acao.php
-								?acao=DeleteObra&art_id=".$artista->getId()."&obra_id=".$obras[$i]->getId()."'>Remover</a>]</li>";
-							}
-							echo "</ul>";
-						?>
-
-						<label for="obra_id">Adicionar obra: </label> <br/>
-						<?php Funcoes::GerarSelect('obra_id', 'obra', 'id_obra', 'nome', 0); ?>
-						<button type="submit" name="acao" value="InsertObra">Adicionar</button> <br/><br/>
+							<ul class="collection">
+								<?php foreach ($obras as $obra) : ?>
+									<li class="collection-item">
+										<span class="title">
+											<a href="obra.php?id=<?= $obra->getId(); ?>" class="link">
+												<?= $obra->getNome(); ?>
+											</a>
+										</span>
+										<a
+											href="artista_acao.php?acao=DeleteObra&art_id=<?= $id; ?>&obra_id=<?= $obra->getId(); ?>"
+											class="secondary-content tooltipped"
+											data-tooltip="Remover obra"
+										>
+											<i class="material-icons red-text text-darken-2">close</i>
+										</a>
+									</li>
+								<?php endforeach; ?>
+							</ul>
 							
-						<?php 
-							} else { echo "<i>Obras só podem ser adicionados a um artista após seu cadastro.</i><br/><br/>"; }
-						?>
-					</fieldset> <br/>
+							<div class="row">
+								<div class="input-field col s12">
+									<?php Funcoes::GerarSelect('obra_id', 'obra', 'id_obra', 'nome', 0); ?>
+									<span class="helper-text">Adicionar obras</span>
+								</div>
+								<div class="input-field col s12">
+									<button
+										type="submit" name="acao" value="InsertObra"
+										class="btn blue darken-2 waves-effect waves-right"
+									>
+										<i class="material-icons left">add	</i>
+										Adicionar
+									</button>
+								</div>
+							</div>
 
-					<fieldset>
-						<?php
-						if ($acao == 'Update') {
+						<?php else : ?>
+							<i class="yellow-text text-darken-3">Gêneros só podem ser adicionados a uma obra após seu cadastro.</i>
+						<?php endif; ?>
+
+					</div>
+
+					<div class="row card-panel">
+						<h5 class="light-green-text text-darken-2"><b>Gêneros</b></h5>
+
+						<?php if ($acao == 'Update') :
 							$artista = ArtistaDao::SelectGeneros($artista);
-							$generos = $artista->getGeneros();
+							$generos = $artista->getGeneros();	?>
 
-							echo "<b>Gêneros</b>";
-							echo "<ul>";
-							for ($i=0; $i < count($generos); $i++) { 
-								echo "<li>".$generos[$i]->getNome()
-								." [<a href='artista_acao.php
-								?acao=DeleteGenero&art_id=".$id."&gen_id=".$generos[$i]->getId()."'>Remover</a>]</li>";
-							}
-							echo "</ul>";
-						?>
+							<ul class="collection">
+								<?php foreach ($generos as $genero) : ?>
+									<li class="collection-item">
+										<span class="title">
+											<a href="genero.php?id=<?= $genero->getId(); ?>" class="link">
+												<?= $genero->getNome(); ?>
+											</a>
+										</span>
+										<a
+											href="artista_acao.php?acao=DeleteGenero&art_id=<?= $id; ?>&gen_id=<?= $genero->getId(); ?>"
+											class="secondary-content tooltipped"
+											data-tooltip="Remover gênero"
+										>
+											<i class="material-icons red-text text-darken-2">close</i>
+										</a>
+									</li>
+								<?php endforeach; ?>
+							</ul>
 
-						<label for="genero_id">Adicionar gênero: </label> <br/>
-						<?php Funcoes::GerarSelect_gen('genero_id', 0); ?>
-						<button type="submit" name="acao" value="InsertGenero">Adicionar</button> <br/><br/>
-						<?php 
-							} else { echo "<i>Gêneros só podem ser adicionados a uma obra após seu cadastro.</i><br/><br/>"; }
-						?>
-					</fieldset> <br/>
+							<div class="row">
+								<div class="input-field col s12">
+									<?php Funcoes::GerarSelect_gen('genero_id', 0); ?>
+									<span class="helper-text">Adicionar gêneros</span>
+								</div>
+								<div class="input-field col s12">
+									<button
+										type="submit" name="acao" value="InsertGenero"
+										class="btn light-green darken-2 waves-effect waves-right"
+									>
+										<i class="material-icons left">add	</i>
+										Adicionar
+									</button>
+								</div>
+							</div>
 
-					<?php
-						if ($acao == 'Insert') $acao_txt = "Cadastrar";
-						else if ($acao == 'Update') $acao_txt = "Editar";
-					?>
-					<button type="submit" name="acao" value="<?php echo $acao; ?>"> <?php echo $acao_txt; ?> </button>
+						<?php else : ?>
+							<i class="yellow-text text-darken-3">Gêneros só podem ser adicionados a uma obra após seu cadastro.</i>
+						<?php endif; ?>
 
-					<br/><br/><br/> <button type="submit" name="acao" value="Delete" style="background-color:darkred;color:white;">Excluir</button>
-				</fieldset>
-			</form>
+					</div>
 
+					<div class="row">
+						<div class="input-field col s6">
+							<?php
+								if ($acao == 'Insert') {
+									$acao_txt = 'Cadastrar';
+									$acao_ico = 'add';
+								} else if ($acao == 'Update') {
+									$acao_txt = 'Editar';
+									$acao_ico = 'edit';
+								}
+							?>
+
+							<button
+								class="btn waves-effect waves-light blue-grey"
+								type="submit" name="acao" id="acao" value="<?= $acao ?>"
+							>
+								<i class="material-icons left"><?= $acao_ico; ?></i>
+								<?= $acao_txt; ?>
+							</button>
+						</div>
+
+						<div class="input-field col s6">
+							<button
+								class="btn waves-effect waves-light red"
+								type="submit" name="acao" value="Delete"
+							>
+								<i class="material-icons left">delete</i>
+								Excluir
+							</button>
+						</div>
+					</div>
+
+				</form>
+
+			</div>
 		</div>
 	</main>
 
+	<!-- Scripts -->
+	<script type="text/javascript" src="js/jquery-3.4.1.js"></script> <!-- OBS: jQuery deve estar sempre acima -->
+	<script type="text/javascript" src="js/materialize.min.js"></script>
+	<!-- Materialize auto init -->
+	<script type="text/javascript">
+		M.AutoInit();
+	</script>
 </body>
+
 </html>

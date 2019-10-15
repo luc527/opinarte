@@ -137,12 +137,8 @@ $pedidoPendente = UsuarioDao::pedidoPendente($_SESSION['usuario_id'], $id);
                 'E-mail' => $usuario->getEmail(),
                 'Conta criada em' => $usuario->getData_criaConta(),
                 'Último login' => $usuario->getUltimoLogin(),
-                'Pontuação' => $usuario->getPontuacao(),
                 'ADM' => $usuario->getAdm()
               );
-              if ($usuario->getNivel() !== null) {
-                $infos['Nivel'] = $usuario->getNivel()->getDescricao();
-              }
 
               foreach ($infos as $info => $value) {
                 if ($info == 'ADM' && $value == 0) $value = null;
