@@ -10,8 +10,8 @@ $criterio = 'nome';
 
 $title = 'Listagem de usuários';
 
-$usuarios = $acao == 'SelectTodos' ?
-	UsuarioDao::Select('todos', '')
+$usuarios = $acao == 'SelectTodos'
+	? UsuarioDao::Select('todos', '')
 	: UsuarioDao::Select($criterio, $pesquisa);
 
 ?>
